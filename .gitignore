@@ -1,0 +1,17 @@
+# Binarios y objetos de compilación
+*.o
+*.obj
+*.exe
+*.out
+hospital_marmaja
+build/
+test_paso1
+
+# Archivos del IDE
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Sistema
+.DS_Store

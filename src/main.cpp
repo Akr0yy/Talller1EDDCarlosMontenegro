@@ -2,16 +2,28 @@
 #include "Persona.h"
 #include "Paciente.h"
 #include "RegistroAtencion.h"
+#include "ColaPacientes.h"
+#include "CargadorArchivo.h"
 
 int main() {
-    std::cout << " Probando Paciente " << std::endl;
-    Paciente pac("001", "Juan Perez", 25, "Cardiologia");
-    pac.mostrarInfo();
+    ColaPacientes cola;
+    CargadorArchivo::cargarPacientes("data/pacientes.txt", cola);
 
-    std::cout << "\n Probando RegistroAtencion " << std::endl;
-    RegistroAtencion reg(pac.getNombre(), pac.getEdad(), pac.getServicioDestino());
-    reg.imprimir();
+    std::cout << "\n=== PACIENTES EN ESPERA ===" << std::endl;
+    cola.mostrar();
 
-    std::cout << "\nPrueba de clases base superadas" << std::endl;
+    // Vaciamos la cola por completo para poder probar el caso borde
+    while (!cola.estaVacia()) {
+        Paciente* p = cola.desencolar();
+        delete p;
+    }
+
+    std::cout << "\n=== PROBANDO EXCEPCION (cola vacia) ===" << std::endl;
+    try {
+        cola.desencolar();
+    } catch (const std::string& mensaje) {
+        std::cout << "Excepcion capturada: " << mensaje << std::endl;
+    }
+
     return 0;
 }
