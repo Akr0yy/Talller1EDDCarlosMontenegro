@@ -5,7 +5,6 @@
 *.out
 hospital_marmaja
 build/
-test_paso1
 
 # Archivos del IDE
 .vscode/
