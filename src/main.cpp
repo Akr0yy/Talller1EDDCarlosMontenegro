@@ -1,28 +1,145 @@
 #include <iostream>
-#include "Persona.h"
-#include "Paciente.h"
-#include "RegistroAtencion.h"
+#include <string>
+#include <limits>
 #include "ColaPacientes.h"
 #include "CargadorArchivo.h"
+#include "Hospital.h"
+#include "PilaHistorial.h"
 
-int main() {
-    ColaPacientes cola;
-    CargadorArchivo::cargarPacientes("data/pacientes.txt", cola);
+// Lee un entero desde consola de forma segura. Si el usuario ingresa
+// algo que no es un numero, limpia el estado de cin y lanza una
+// excepcion para que quien llama decida como reaccionar.
+int leerEntero() {
+    int valor;
+    std::cin >> valor;
+
+    if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        throw std::string("Debe ingresar un numero valido.");
+    }
+
+    return valor;
+}
+
+void mostrarMenu() {
+    std::cout << "\n=== HOSPITAL MARMAJA ===" << std::endl;
+    std::cout << "1. Atender pacientes" << std::endl;
+    std::cout << "2. Ver departamento" << std::endl;
+    std::cout << "3. Revisar historial de atencion" << std::endl;
+    std::cout << "4. Salir" << std::endl;
+    std::cout << "Seleccionar opcion: ";
+}
+
+void atenderPacientes(ColaPacientes& cola, Hospital& hospital, PilaHistorial& historial) {
+    if (cola.estaVacia()) {
+        std::cout << "No hay pacientes en espera." << std::endl;
+        return;
+    }
 
     std::cout << "\n=== PACIENTES EN ESPERA ===" << std::endl;
     cola.mostrar();
 
-    // Vaciamos la cola por completo para poder probar el caso borde
-    while (!cola.estaVacia()) {
-        Paciente* p = cola.desencolar();
-        delete p;
+    std::cout << "Indique la cantidad de pacientes a atender: ";
+    int cantidad;
+    try {
+        cantidad = leerEntero();
+    } catch (const std::string& mensaje) {
+        std::cout << mensaje << std::endl;
+        return;
     }
 
-    std::cout << "\n=== PROBANDO EXCEPCION (cola vacia) ===" << std::endl;
+    if (cantidad <= 0) {
+        std::cout << "La cantidad debe ser mayor a 0." << std::endl;
+        return;
+    }
+
+    std::cout << "\n=== ATENDIENDO PACIENTES ===" << std::endl;
+    for (int i = 0; i < cantidad && !cola.estaVacia(); i++) {
+        Paciente* paciente = cola.desencolar();
+
+        std::cout << "ID: " << paciente->getId() << std::endl;
+        std::cout << "Nombre: " << paciente->getNombre() << std::endl;
+        std::cout << "Edad: " << paciente->getEdad() << std::endl;
+        std::cout << "Servicio: " << paciente->getServicioDestino() << std::endl;
+
+        try {
+            hospital.recibirPaciente(paciente);
+            historial.agregarAtencion(new RegistroAtencion(
+                paciente->getNombre(), paciente->getEdad(), paciente->getServicioDestino()
+            ));
+            std::cout << "Paciente enviado a " << paciente->getServicioDestino() << "." << std::endl;
+        } catch (const std::string& mensaje) {
+            std::cout << "No se pudo derivar al paciente: " << mensaje << std::endl;
+            delete paciente;
+        }
+        std::cout << std::endl;
+    }
+}
+
+void verDepartamento(Hospital& hospital) {
+    std::cout << "\n=== DEPARTAMENTOS/SERVICIOS ===" << std::endl;
+    hospital.mostrarServicios();
+
+    std::cout << "Seleccionar opcion: ";
+    int opcion;
     try {
-        cola.desencolar();
+        opcion = leerEntero();
+        Servicio* servicio = hospital.obtenerPorIndice(opcion);
+
+        std::string nombreMayus = servicio->getNombre();
+        for (char& c : nombreMayus) c = toupper(c);
+
+        std::cout << "\n=== ESTADO " << nombreMayus << " ===" << std::endl;
+        servicio->mostrarPacientes();
     } catch (const std::string& mensaje) {
-        std::cout << "Excepcion capturada: " << mensaje << std::endl;
+        std::cout << mensaje << std::endl;
+    }
+}
+
+void revisarHistorial(PilaHistorial& historial) {
+    std::cout << "\n=== HISTORIAL DE ULTIMAS ATENCIONES DEL HOSPITAL ===" << std::endl;
+    historial.mostrarHistorial();
+}
+
+int main(int argc, char* argv[]) {
+    std::string rutaArchivo = (argc > 1) ? argv[1] : "data/pacientes.txt";
+
+    ColaPacientes cola;
+    CargadorArchivo::cargarPacientes(rutaArchivo, cola);
+
+    Hospital hospital;
+    PilaHistorial historial;
+
+    bool salir = false;
+    while (!salir) {
+        mostrarMenu();
+
+        int opcion;
+        try {
+            opcion = leerEntero();
+        } catch (const std::string& mensaje) {
+            std::cout << mensaje << std::endl;
+            continue;
+        }
+
+        switch (opcion) {
+            case 1:
+                atenderPacientes(cola, hospital, historial);
+                break;
+            case 2:
+                verDepartamento(hospital);
+                break;
+            case 3:
+                revisarHistorial(historial);
+                break;
+            case 4:
+                std::cout << "Hasta luego." << std::endl;
+                salir = true;
+                break;
+            default:
+                std::cout << "Opcion invalida." << std::endl;
+        }
     }
 
     return 0;

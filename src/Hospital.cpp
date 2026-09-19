@@ -56,6 +56,24 @@ void Hospital::recibirPaciente(Paciente* paciente) {
     servicio->agregarPaciente(paciente);
 }
 
+Servicio* Hospital::obtenerPorIndice(int indice) const {
+    if (indice < 1) {
+        throw std::string("Opcion invalida.");
+    }
+
+    NodoServicio* actual = inicio;
+    int contador = 1;
+    while (actual != nullptr) {
+        if (contador == indice) {
+            return actual->dato;
+        }
+        actual = actual->siguiente;
+        contador++;
+    }
+
+    throw std::string("Opcion invalida.");
+}
+
 void Hospital::mostrarServicios() const {
     NodoServicio* actual = inicio;
     int contador = 1;

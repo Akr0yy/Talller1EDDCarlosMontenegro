@@ -26,4 +26,9 @@ public:
     void recibirPaciente(Paciente* paciente);
 
     void mostrarServicios() const;
+
+    // Retorna el servicio ubicado en la posicion 'indice' (1-based,
+    // tal como se numera en el menu). Lanza excepcion si esta fuera
+    // de rango.
+    Servicio* obtenerPorIndice(int indice) const;
 };
