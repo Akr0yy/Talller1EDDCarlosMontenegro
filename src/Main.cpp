@@ -27,7 +27,8 @@ void mostrarMenu() {
     std::cout << "1. Atender pacientes" << std::endl;
     std::cout << "2. Ver departamento" << std::endl;
     std::cout << "3. Revisar historial de atencion" << std::endl;
-    std::cout << "4. Salir" << std::endl;
+    std::cout << "4. Buscar paciente" << std::endl;
+    std::cout << "5. Salir" << std::endl;
     std::cout << "Seleccionar opcion: ";
 }
 
@@ -102,6 +103,28 @@ void revisarHistorial(PilaHistorial& historial) {
     historial.mostrarHistorial();
 }
 
+void buscarPaciente(ColaPacientes& cola, Hospital& hospital) {
+    std::cout << "Ingrese el ID del paciente a buscar: ";
+    std::string id;
+    std::cin >> id;
+
+    Paciente* enCola = cola.buscarPorId(id);
+    if (enCola != nullptr) {
+        std::cout << "\n=== PACIENTE ENCONTRADO (en espera) ===" << std::endl;
+        enCola->mostrarInfo();
+        return;
+    }
+
+    Paciente* enServicio = hospital.buscarPacientePorId(id);
+    if (enServicio != nullptr) {
+        std::cout << "\n=== PACIENTE ENCONTRADO ===" << std::endl;
+        enServicio->mostrarInfo();
+        return;
+    }
+
+    std::cout << "No se encontro ningun paciente con id " << id << "." << std::endl;
+}
+
 int main(int argc, char* argv[]) {
     std::string rutaArchivo = (argc > 1) ? argv[1] : "data/pacientes.txt";
 
@@ -134,7 +157,10 @@ int main(int argc, char* argv[]) {
                 revisarHistorial(historial);
                 break;
             case 4:
-                std::cout << "Hasta luego." << std::endl;
+                buscarPaciente(cola, hospital);
+                break;
+            case 5:
+                std::cout << "Hasta luego :D." << std::endl;
                 salir = true;
                 break;
             default:

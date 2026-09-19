@@ -24,5 +24,9 @@ public:
 
     bool existeId(const std::string& id) const;
 
+    // Busca un paciente por id sin sacarlo de la cola.
+    // Retorna nullptr si no se encuentra.
+    Paciente* buscarPorId(const std::string& id) const;
+
     void mostrar() const;
 };

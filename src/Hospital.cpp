@@ -18,7 +18,7 @@ Hospital::~Hospital() {
     while (actual != nullptr) {
         NodoServicio* temp = actual;
         actual = actual->siguiente;
-        delete temp->dato; //libera el Servicio (que libera sus pacientes)
+        delete temp->dato; // libera el Servicio (que libera sus pacientes)
         delete temp;
     }
 }
@@ -82,4 +82,16 @@ void Hospital::mostrarServicios() const {
         actual = actual->siguiente;
         contador++;
     }
+}
+
+Paciente* Hospital::buscarPacientePorId(const std::string& id) const {
+    NodoServicio* actual = inicio;
+    while (actual != nullptr) {
+        Paciente* encontrado = actual->dato->buscarPaciente(id);
+        if (encontrado != nullptr) {
+            return encontrado;
+        }
+        actual = actual->siguiente;
+    }
+    return nullptr;
 }

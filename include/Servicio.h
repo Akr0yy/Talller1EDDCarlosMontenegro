@@ -22,5 +22,9 @@ public:
     // Agrega un paciente al final de la lista del servicio.
     void agregarPaciente(Paciente* paciente);
 
+    // Busca un paciente por id dentro de este servicio.
+    // Retorna nullptr si no se encuentra.
+    Paciente* buscarPaciente(const std::string& id) const;
+
     void mostrarPacientes() const;
 };

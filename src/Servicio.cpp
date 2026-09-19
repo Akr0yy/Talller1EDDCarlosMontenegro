@@ -35,6 +35,17 @@ void Servicio::agregarPaciente(Paciente* paciente) {
     cantidad++;
 }
 
+Paciente* Servicio::buscarPaciente(const std::string& id) const {
+    NodoPacienteServicio* actual = inicio;
+    while (actual != nullptr) {
+        if (actual->dato->getId() == id) {
+            return actual->dato;
+        }
+        actual = actual->siguiente;
+    }
+    return nullptr;
+}
+
 void Servicio::mostrarPacientes() const {
     std::cout << "Pacientes en el departamento de " << nombre << ": "
               << cantidad << std::endl;

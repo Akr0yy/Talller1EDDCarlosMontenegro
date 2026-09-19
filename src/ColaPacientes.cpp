@@ -60,6 +60,17 @@ bool ColaPacientes::existeId(const std::string& id) const {
     return false;
 }
 
+Paciente* ColaPacientes::buscarPorId(const std::string& id) const {
+    NodoPaciente* actual = inicio;
+    while (actual != nullptr) {
+        if (actual->dato->getId() == id) {
+            return actual->dato;
+        }
+        actual = actual->siguiente;
+    }
+    return nullptr;
+}
+
 void ColaPacientes::mostrar() const {
     if (estaVacia()) {
         std::cout << "No hay pacientes en espera." << std::endl;

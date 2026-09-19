@@ -31,4 +31,8 @@ public:
     // tal como se numera en el menu). Lanza excepcion si esta fuera
     // de rango.
     Servicio* obtenerPorIndice(int indice) const;
+
+    // Busca un paciente por id recorriendo todos los servicios.
+    // Retorna nullptr si no se encuentra en ninguno.
+    Paciente* buscarPacientePorId(const std::string& id) const;
 };
