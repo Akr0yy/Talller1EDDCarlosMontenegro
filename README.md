@@ -44,7 +44,7 @@ El código está organizado en `include/` (cabeceras `.h`) y `src/` (implementac
 hospital-marmaja/
 ├── include/     # Archivos .h (declaraciones de clases)
 ├── src/         # Archivos .cpp (implementaciones) + main.cpp
-├── data/        # pacientes.txt (ejemplo) y pacientes_prueba.txt (casos borde)
+├── data/        # pacientes.txt (ejemplo)
 └── README.md
 ```
 
